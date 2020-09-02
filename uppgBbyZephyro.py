@@ -93,7 +93,7 @@ print(f'The oldest person is {people[cur]}, they have shoesize '
 
 # uppgift B ~ 3.2 Option 1
 #
-# Objective: Find the person with the largest shoesize,
+# Objective: Find the person with the median shoesize,
 #            then print their name and age.
 #
 # Methodology:
@@ -116,9 +116,9 @@ print(f'The person with the median shoesize is {people[cur]}, they are '
       f'{people[cur+1]} years old.')
 
 
-# uppgift B ~ 3.2 Optino 2
+# uppgift B ~ 3.2 Option 2
 #
-# Objective: Find the person with the largest shoesize,
+# Objective: Find the person with the median shoesize,
 #            then print their name and age.
 #
 # Methodology:
@@ -136,11 +136,11 @@ seek = 'shoesize'
 targets = people[offset[seek]::step]
 
 targets_in_order = sorted(targets, key=lambda x: int(x))
-middle, reminder = divmod(len(targets_in_order), 2)
+middle, remainder = divmod(len(targets_in_order), 2)
 median = targets_in_order[middle]
 
 # This method is only valid when there's an odd amount of people registered.
-assert reminder != 0
+assert remainder != 0
 
 cur = targets.index(median) * step
 print(f'The person with the median shoesize is {people[cur]}, they are '
@@ -167,7 +167,7 @@ seek, value = input_search()
 try:
     targets = people[offset[seek]::step]
     # seek might not exist in offset. -> KeyError
-    cur = targets.index(value)
+    cur = targets.index(value) * step
     # Value might not exist in targets -> ValueError
     findings = (f'Person found!\n\t\tName: {people[cur]}\n\t\tAge: '
                 f'{people[cur+1]}\n\t\tShoesize: {people[cur+2]}\n')
@@ -182,149 +182,87 @@ print(findings)
 ###############################################################################
 #   uppgift B
 #   Solution 2
-#   Dictonary solution, re-write in progress
+#   Pure dictonary solution
 ###############################################################################
 
+print('\n-- Solution 2 --\n')
 
-# Extensive dict-only solution
-
-# data_table = {
-#     'martin': {
-#         'name': 'martin',
-#         'age': '13',
-#         'shoesize': '25',
-#     },
-#     'pelle': {
-#         'name': 'pelle',
-#         'age': '15',
-#         'shoesize': '55'
-#     },
-#     'rasmus': {
-#         'name': 'rasmus',
-#         'age': '17',
-#         'shoesize': '35'
-#     }
-# }
-
-# age_lookup_table = {
-#     '15': data_table['pelle'],
-#     '13': data_table['martin'],
-#     '17': data_table['rasmus']
-# }
-
-# shoesize_lookup_table = {
-#     '55': data_table['pelle'],
-#     '25': data_table['martin'],
-#     '35': data_table['rasmus']
-# }
-
-# name_lookup_table = {
-#     'pelle': data_table['pelle'],
-#     'martin': data_table['martin'],
-#     'rasmus': data_table['rasmus']
-# }
-
-# section_table = {
-#     'name': name_lookup_table,
-#     'age': age_lookup_table,
-#     'shoesize': shoesize_lookup_table,
-# }
+lookup = {
+    'name': {},
+    'age': {},
+    'shoesize': {},
+}
+data = {}
 
 
-# invalid_section = {
-#     'type': 'invalid section',
-#     'text': "The section is invalid!"
-# }
-
-# invalid_data = {
-#     'type': 'data not found',
-#     'text': 'The data was not found.'
-# }
-
-# validate_args = {
-#     True: ['fail', 'safe']  # equivalent to invalid data scenario
-# }
-
-# validate_section = {
-#     True: invalid_section
-# }
-
-# validate_data = {
-#     True: invalid_data
-# }
-
-# text_table = {
-#     True: "Person found!\n\t\tName: {data[name]}\n\t\tAge: {data[age]}\n\t\tShoesize: {data[shoesize]}\n",
-#     False: "ERROR: {data[text]}"
-# }
-
-# if "-m2" in argv:
-#     while True:
-#         args = input("Please enter search data. `[ name | age | shoesize ] [ value ]`\n>> ").lower().split(" ")
-#         args = validate_args.get(len(args) != 2, args)
-
-#         section_test = section_table.get(args[0], invalid_section)
-#         valid_section = validate_section.get(section_test is False, section_test)
-
-#         test_data = valid_section.get(args[1], invalid_data)
-#         valid_data = validate_data.get('name' not in test_data, test_data)
-
-#         text = text_table['name' in valid_data]
-#         print(text.format(data=valid_data))
+def populate(name: str, age: str, size: str) -> None:
+    """Helper function to populate the dictonaries with data"""
+    lookup['name'][name] = id(name)
+    lookup['age'][age] = id(name)
+    lookup['shoesize'][size] = id(name)
+    data[id(name)] = {
+        'name': name,
+        'age': age,
+        'shoesize': size
+    }
 
 
-# # 'Short' dict-only solution
+if not DEV_MODE:
+    populate(input_person())
+    populate(input_person())
+    populate(input_person())
+else:
+    populate('pelle', '15', '55')
+    populate('martin', '13', '25')
+    populate('rasmus', '17', '35')
 
-# data_table = {
-#     'martin': {
-#         'name': 'martin',
-#         'age': '13',
-#         'shoesize': '25',
-#     },
-#     'pelle': {
-#         'name': 'pelle',
-#         'age': '15',
-#         'shoesize': '55'
-#     },
-#     'rasmus': {
-#         'name': 'rasmus',
-#         'age': '17',
-#         'shoesize': '35'
-#     }
-# }
 
-# age_lookup_table = {
-#     data_table.values()[0]['age']: data_table[data_table.keys()[0]],
-#     data_table.values()[1]['age']: data_table[data_table.keys()[1]],
-#     data_table.values()[2]['age']: data_table[data_table.keys()[2]]
-# }
+# uppgift B ~ 3.1
+#
+# Objective: Find the oldest person and print their name and shoesize.
 
-# shoesize_lookup_table = {
-#     '55': data_table['pelle'],
-#     '25': data_table['martin'],
-#     '35': data_table['rasmus']
-# }
+old = max(lookup['age'], key=lambda x: int(x))
+key = lookup['age'][old]
+person = data[key]
+print(f'The oldest person is {person["name"]}, they have shoesize '
+      f'{person["shoesize"]}')
 
-# name_lookup_table = {
-#     'pelle': data_table['pelle'],
-#     'martin': data_table['martin'],
-#     'rasmus': data_table['rasmus']
-# }
 
-# section_table = {
-#     'name': name_lookup_table,
-#     'age': age_lookup_table,
-#     'shoesize': shoesize_lookup_table,
-# }
+# uppgift B ~ 3.2
+#
+# Objective: Find the person with the median shoesize,
+#            then print their name and age.
 
-# while True:
-#     try:
-#         args = input('Please enter search data. `[ name | age | shoesize ] [ value ]`\n>> ').lower().split(' ')
-#         section_search = args[0]
-#         value_search = args[1]
-#         data = section_table[section_search][value_search]
-#         print(f"Person found!\n\t\tName: {data['name']}\n\t\tAge: {data['age']}\n\t\tShoesize:' {data['shoesize']}\n")
-#     except KeyboardInterrupt:
-#         quit()
-#     except Exception as e:
-#         print(f'{type(e)}! ~ {e}')
+half, remainder = divmod(len(data), 2)
+assert remainder != 0  # Median values don't exist for sequences of even lenth
+
+shoes = sorted(lookup['shoesize'], key=lambda x: int(x))
+shoe = shoes[half]
+key = lookup['shoesize'][shoe]
+person = data[key]
+# let's write that in 2 lines...
+#   shoe = sorted(lookup['shoesize'], key=lambda x: int(x))[half]
+#   person = data[lookup['shoesize'][shoe]]
+# all in one line?
+#   person = data[lookup['shoesize'][sorted(lookup['shoesize'], key=lambda x: int(x))[half]]]
+
+print(f'The person with the median shoesize is {person["name"]}, they are '
+      f'{person["age"]} years old.')
+
+
+# uppgift B ~ 4
+#
+# Objective: Ask the user to do a search among the registered people
+#            in the following format: [ name | age | shoesize ], [ value ].
+#            then look for this value among the registered people and print
+#            all the information about them if they are found.
+
+seek, value = input_search()
+
+try:
+    key = lookup[seek][value]
+    person = data[key]
+    print(f'Person found!\n\t\tName: {person["name"]}\n\t\tAge: '
+          f'{person["age"]}\n\t\tShoesize: {person["shoesize"]}\n')
+except Exception:
+    print('Sorry could not find anyone with the {seek} {value}')
