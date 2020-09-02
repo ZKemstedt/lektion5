@@ -61,7 +61,6 @@ offset = {
 step = len(offset)  # step = size of each set of data
 
 if not DEV_MODE:
-    # people += [*input_person()]
     people += input_person()
     people += input_person()
     people += input_person()
