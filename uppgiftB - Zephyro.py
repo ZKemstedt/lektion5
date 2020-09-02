@@ -205,7 +205,7 @@ print('\n-- Solution 2 --\n')
 #   }
 #
 # If we know one category:value pair eg. age: 15, we can easily get
-# the 'owner' of that data by `data[lookup['age'][15]]`.
+# the owner of that data by `person = data[lookup['age'][15]]`.
 # If you have trouble seeing how it works out...
 # Let's do it step by step:
 #   category = lookup['age']
