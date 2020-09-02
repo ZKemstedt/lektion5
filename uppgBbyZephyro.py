@@ -7,17 +7,18 @@ import typing as t
 # REQUIREMENTS
 # 1. not-case sensitive
 # 2. accept and track user input for 3 people's name, age and shoesize
-# 3. print namn and shoesize of the oldest, print name and age of the one that
-#      has the median shoesize
-# 4. after this the user should be able to search for the people by inputing
-# 		one of the three datatypes as well as it's value. If the program finds
-# 		someone matching any value it should print all of it's associated data.
+# 3. print name and shoesize of the oldest registered person, print name
+#    and age of the person with the median shoesize
+# 4. after this the user should be able to search for someone by inputing
+# 	 one of the three datatypes as well as it's value. If the program finds
+# 	 someone matching any value it should print all of it's associated data.
+
 
 # toggles manual data entry
 DEV_MODE = True
 
-# Shared code
 
+# Helper functions
 
 def input_person(retries: int = 3) -> t.Tuple[str, str, str]:
     """Helper function to create user data."""
@@ -41,12 +42,12 @@ def input_search(retries: int = 3) -> t.Tuple[str, str]:
             return input_search(retries - 1)
         raise
 
+
 ###############################################################################
 #   uppgift B
 #   Solution 1
 #   Using one primary list of all data, and list-slicing for most operations
 ###############################################################################
-
 
 people = []
 offset = {
@@ -67,10 +68,10 @@ else:
     people += ['rasmus', '17', '35']
 
 
-#
 # uppgift B ~ 3.1
 #
 # Objective: Find the oldest person and print their name and shoesize.
+#
 # Methodology:
 # 1. Create a list-slice `targets` from `people`, containing every `step`
 #    value, starting from the value `offset[seek]`.
@@ -89,15 +90,13 @@ cur = targets.index(max(targets, key=lambda x: int(x))) * step
 print(f'The oldest person is {people[cur]}, they have shoesize '
       f'{people[cur+2]}')
 
-#
-# uppgift B ~ 3.2
+
+# uppgift B ~ 3.2 Option 1
 #
 # Objective: Find the person with the largest shoesize,
 #            then print their name and age.
-# Methodology: (2 alternatives)
-
-
-# V1 (Only works if there's exactly 3 people registered)
+#
+# Methodology:
 # 1. Create `targets` once again, this time it's all the shoesizes registered.
 # 2. Once again find the max value in `targets`, but replace that value with 0.
 # 3. Find the new max value in `targets` and assign it's index,
@@ -117,7 +116,12 @@ print(f'The person with the median shoesize is {people[cur]}, they are '
       f'{people[cur+1]} years old.')
 
 
-# V2 (Works as long as the amount of people registerd is odd (%2!=0))
+# uppgift B ~ 3.2 Optino 2
+#
+# Objective: Find the person with the largest shoesize,
+#            then print their name and age.
+#
+# Methodology:
 # 1. `targets` with shoesizes
 # 2. `targets_in_order`, same as `targets` but sorted ascendingly.
 # 3. Get the `middle` index of `targets_in_order`. Technically...
@@ -129,7 +133,6 @@ print(f'The person with the median shoesize is {people[cur]}, they are '
 # 6. Print the findings.
 
 seek = 'shoesize'
-# four = offset[seek]
 targets = people[offset[seek]::step]
 
 targets_in_order = sorted(targets, key=lambda x: int(x))
@@ -144,7 +147,6 @@ print(f'The person with the median shoesize is {people[cur]}, they are '
       f'{people[cur+1]} years old.')
 
 
-#
 # uppgift B ~ 4
 #
 # Objective: Ask the user to do a search among the registered people
@@ -153,13 +155,13 @@ print(f'The person with the median shoesize is {people[cur]}, they are '
 #            all the information about them if they are found.
 #
 # Methodology:
-#   1. Get user input using the helper function.
-#   2. Try...
-#     2.1.  Create `targets`
-#     2.2.  Get the index of the `value` in `targets`,
-#           multiply by step and assign to `cur`.
-#   3. Except...
-#   4. Print the findings.
+# 1. Get user input using the helper function.
+# 2. Try...
+#   2.1.  Create `targets`
+#   2.2.  Get the index of the `value` in `targets`,
+#         multiply by step and assign to `cur`.
+# 3. Except...
+# 4. Print the findings.
 
 seek, value = input_search()
 try:
