@@ -25,8 +25,8 @@ def input_person(retries: int = 3) -> t.Tuple[str, str, str]:
     try:
         name, age, size = input(
             'name, age, shoesize\n>> '
-            ).strip().lower().split(',')
-        return name, age, size
+            ).lower().split(',')
+        return name.strip(), age.strip(), size.strip()
     except ValueError:
         if retries:
             return input_person(retries - 1)
@@ -38,8 +38,8 @@ def input_search(retries: int = 3) -> t.Tuple[str, str]:
     try:
         category, value = input(
             '[name|age|shoesize],[search_value]\n>> '
-            ).strip().lower().split(',')
-        return category, value
+            ).lower().split(',')
+        return category.strip(), value.strip()
     except ValueError:
         if retries:
             return input_search(retries - 1)
@@ -188,23 +188,20 @@ print(findings)
 ###############################################################################
 print('\n-- Solution 2 --\n')
 
-
 #
 # Methodology / data structure:
 # 2 primary dicts are used, both of them have sub dicts
 #   lookup {
-#       category (name) -> value { value -> key of owner }
-#       category (age) -> value { value -> key of owner }
-#       category (size) -> value { value -> key of owner }
+#       category key (seek) -> category {
+#           value -> key
+#       }
 #   }
 #   data {
-#       key -> owner {
-#           category -> value (name)
-#           category -> value (age)
-#           category -> value (size)
+#       key -> owner (person) {
+#           category key -> value
 #   }
 #
-# If we know one category:value pair eg. age: 15, we can easily get
+# If we know one seek:value pair eg. age: 15, we can easily get
 # the owner of that data by `person = data[lookup['age'][15]]`.
 # If you have trouble seeing how it works out...
 # Let's do it step by step:
@@ -285,4 +282,76 @@ try:
     print(f'Person found!\n\t\tName: {person["name"]}\n\t\tAge: '
           f'{person["age"]}\n\t\tShoesize: {person["shoesize"]}\n')
 except Exception:
+    print(f'Sorry could not find anyone with the {seek} {value}')
+
+
+###############################################################################
+#   uppgift B
+#   Solution 3
+#   Using a Class and a list of objects of said class.
+###############################################################################
+
+class Person(object):
+    """Simple datacontainer reprsenenting a person"""
+
+    def __init__(self, name: str, age: str, shoesize: str):
+        """Create person with name:str, age: str, shoesize: str"""
+        self.name = name
+        self.age = age
+        self.shoesize = shoesize
+
+    def __str__(self) -> str:
+        """Format class data for presentation"""
+        return (f'Person found!\n\t\tName: {self.name}\n\t\tAge: '
+                f'{self.age}\n\t\tShoesize: {self.shoesize}\n')
+
+
+people = []
+
+if not DEV_MODE:
+    people += [Person(input_person())]
+    people += [Person(input_person())]
+    people += [Person(input_person())]
+else:
+    people += [Person('pelle', '15', '55')]
+    people += [Person('martin', '13', '25')]
+    people += [Person('rasmus', '17', '35')]
+
+# uppgift B ~ 3.1
+#
+# Objective: Find the oldest person and print their name and shoesize.
+
+print(max(people, key=lambda x: int(x.age)))
+
+
+# uppgift B ~ 3.2
+#
+# Objective: Find the person with the median shoesize,
+#            then print their name and age.
+
+half, remainder = divmod(len(people), 2)
+assert remainder != 0  # Median values don't exist for sequences of even lenth
+
+print(sorted(people, key=lambda x: int(x.shoesize))[half])
+
+# uppgift B ~ 4
+#
+# Objective: Ask the user to do a search among the registered people
+#            in the following format: [ name | age | shoesize ], [ value ].
+#            then look for this value among the registered people and print
+#            all the information about them if they are found.
+
+seek, value = input_search()
+
+found = False
+for person in people:
+    try:
+        if getattr(person, seek) == value:
+            print(person)
+            found = True
+    except AttributeError:
+        print(f"{seek} is not a valid search key!\nExiting...")
+        break
+
+if not found:
     print(f'Sorry could not find anyone with the {seek} {value}')
